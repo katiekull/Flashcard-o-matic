@@ -1,75 +1,88 @@
-
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { createDeck } from "../../utils/api/index";
+import { createDeck } from "../../utils/api/index.js";
 
-function CreateDeck() {
-  const [newDeck, setNewDeck] = useState({name: "", description: ""});
+function CreateDeck({ updateDecks }) {
+  const [newDeck, setNewDeck] = useState({ name: "", description: "" });
+
   const history = useHistory();
 
-  async function handleSubmit(event) {
-      event.preventDefault();
-      const response = await createDeck(newDeck);
-      history.push(`/decks/${response.id}`);
-  }
-
-  const handleChange = (event) => {
-      setNewDeck({...newDeck, [event.target.name]: event.target.value});
+  const changeForm = ({ target }) => {
+    setNewDeck({ ...newDeck, [target.name]: target.value });
   };
 
+  const submitForm = async (event) => {
+    event.preventDefault();
+    const response = await createDeck(newDeck);
+    history.push(`/decks/${response.id}`);
+    updateDecks(1);
+  };
+
+  // return a webpage containing the following content
   return (
-      <div className="col-0 mx-auto">
-          <nav>
-              <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                      <Link to="/">Home</Link>
-                  </li>
-                  <li className="breadcrumb-item">Create Deck</li>
-              </ol>
-          </nav>
-          <header>
-              <h2>Create Deck</h2>
-          </header>
-          <form>
-              <div>
-                  <label>Name:</label><br />
-                  <input
-                    id="name"
-                    type="text"
-                    name="name"
-                    placeholder="Deck Name"
-                    onChange={handleChange}
-                    value={newDeck.name}
-                    style={{width: "100%"}}
-                  />
-              </div>
-              <br />
-              <div>
-                  <label>Description:</label><br />
-                  <textarea 
-                    id="description"
-                    type="textarea"
-                    name="description"
-                    rows="3"
-                    placeholder="Brief description of the deck"
-                    onChange={handleChange}
-                    value={newDeck.description}
-                    style={{width: "100%"}}
-                  />
-              </div>
-              <Link to="/" className="btn btn-secondary mr-3">
-                  Cancel
-              </Link>
-              <button
-                type="submit"
-                onClick={handleSubmit}
-                className="btn btn-primary"
-              >
-                  Submit
-              </button>
-          </form>
+    <div className="col-9 mx-auto" style={{ fontFamily: "Space Grotesk" }}>
+      <div className="row pl-4 pb-2">
+        <h1>Create Deck</h1>
       </div>
-  )
+      <nav aria-label="breadcrumb">
+        <ol className="breadcrumb bg-light shadow bg-white rounded pt-2 d-flex justify-content-start">
+          <li className="breadcrumb-item" >
+            <Link to={`/`}>
+              <i
+                className="fas fa-home"
+                style={{ color: "black" }}
+                aria-hidden="true"
+              ></i>
+            </Link>
+          </li>
+
+          <li className="breadcrumb-item">Create Deck</li>
+        </ol>
+      </nav>
+
+      <form onSubmit={submitForm}>
+        <div className="form-group">
+          <label>Name</label>
+
+          <input
+            type="text"
+            name="name"
+            value={newDeck.name}
+            onChange={changeForm}
+            id="name"
+            className="form-control"
+            placeholder="Deck Name"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Description</label>
+
+          <textarea
+            name="description"
+            value={newDeck.description}
+            onChange={changeForm}
+            className="form-control"
+            id="description"
+            placeholder="Brief description of the deck."
+            rows={4}
+          />
+        </div>
+
+        <Link to={`/`} name="cancel" className="btn btn mr-3" style={{ border: "2px solid #6D1CBC", color: "#6D1CBC" }}>
+          Cancel
+        </Link>
+
+        <button
+          type="submit"
+          className="btn text-white"
+          style={{ backgroundColor: "#6D1CBC" }}
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  );
 }
 
 export default CreateDeck;
